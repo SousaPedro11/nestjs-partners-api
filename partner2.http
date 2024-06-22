@@ -1,0 +1,75 @@
+### GET all eventos
+GET http://localhost:3001/eventos
+
+### POST an event
+# @name createEvent
+POST http://localhost:3001/eventos
+Content-Type: application/json
+
+{
+    "nome": "Event 1",
+    "descricao": "Event 1 descricao",
+    "data": "2021-01-01T00:00:00Z",
+    "preco": 100
+}
+
+###
+@eventId = {{createEvent.response.body.id}}
+
+### GET an event
+GET http://localhost:3001/eventos/{{eventId}}
+
+### DELETE an event
+DELETE http://localhost:3001/eventos/{{eventId}}
+
+### PATCH an event
+PATCH http://localhost:3001/eventos/{{eventId}}
+Content-Type: application/json
+
+{
+    "nome": "Event 1 updatad",
+    "data": "2021-01-02T00:00:00Z"
+}
+
+### GET all lugares
+GET http://localhost:3001/eventos/{{eventId}}/lugares
+
+### POST an event
+# @name createSpot
+POST http://localhost:3001/eventos/{{eventId}}/lugares
+Content-Type: application/json
+
+{
+    "nome": "Spot 1"
+}
+
+###
+@spotId = {{createSpot.response.body.id}}
+
+### GET an spot
+GET http://localhost:3001/eventos/{{eventId}}/lugares/{{spotId}}
+
+### DELETE an spot
+DELETE http://localhost:3001/eventos/{{eventId}}/lugares/{{spotId}}
+
+### PATCH an spot
+PATCH http://localhost:3001/eventos/{{eventId}}/lugares/{{spotId}}
+Content-Type: application/json
+
+{
+    "nome": "Spot 1"
+}
+
+###
+@spotName = {{createSpot.response.body.nome}}
+
+### POST reserve a spot
+POST http://localhost:3001/eventos/{{eventId}}/reservar-lugar
+Content-Type: application/json
+X-Api-Key: 123
+
+{
+    "lugares": ["{{ spotName }}"],
+    "tipoIngresso": "FULL",
+    "email": "teste@teste.com"
+}

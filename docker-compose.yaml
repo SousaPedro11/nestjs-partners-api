@@ -1,0 +1,59 @@
+services:
+  partner-db:
+    container_name: partner-db
+    image: mysql:lts
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ALLOW_EMPTY_PASSWORD: false
+    volumes:
+      - mysql_config:/etc/mysql/conf.d
+      - mysql_data:/var/lib/mysql
+      - /etc/localtime:/etc/localtime:ro
+      - .docker/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - partners
+    ports:
+      - 3306:3306
+  
+  partner-api-1:
+    container_name: partner-api-1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - .:/home/node/app
+      - ./.env.partner1:/home/node/app/.env
+    networks:
+      - partners
+    ports:
+      - 3000:3000
+    command: ["sh", "-c", "dockerize -wait tcp://partner-db:3306 -timeout 30s && npx prisma migrate deploy && yarn run start:debug"]
+    depends_on:
+      - partner-db
+
+  partner-api-2:
+    container_name: partner-api-2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - .:/home/node/app
+      - ./.env.partner2:/home/node/app/.env
+    networks:
+      - partners
+    ports:
+      - 3001:3001
+    command: ["sh", "-c", "dockerize -wait tcp://partner-db:3306 -timeout 30s && npx prisma migrate deploy && yarn run start:debug -- partner2"]
+    depends_on:
+      - partner-db
+
+volumes:
+  mysql_config:
+  mysql_data:
+
+networks:
+  partners:
+    name: partners

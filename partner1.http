@@ -1,0 +1,75 @@
+### GET all events
+GET http://localhost:3000/events
+
+### POST an event
+# @name createEvent
+POST http://localhost:3000/events
+Content-Type: application/json
+
+{
+    "name": "Event 1",
+    "description": "Event 1 description",
+    "date": "2021-01-01T00:00:00Z",
+    "price": 100
+}
+
+###
+@eventId = {{createEvent.response.body.id}}
+
+### GET an event
+GET http://localhost:3000/events/{{eventId}}
+
+### DELETE an event
+DELETE http://localhost:3000/events/{{eventId}}
+
+### PATCH an event
+PATCH http://localhost:3000/events/{{eventId}}
+Content-Type: application/json
+
+{
+    "name": "Event 1 updated",
+    "date": "2021-01-02T00:00:00Z"
+}
+
+### GET all spots
+GET http://localhost:3000/events/{{eventId}}/spots
+
+### POST an event
+# @name createSpot
+POST http://localhost:3000/events/{{eventId}}/spots
+Content-Type: application/json
+
+{
+    "name": "Spot 1"
+}
+
+###
+@spotId = {{createSpot.response.body.id}}
+
+### GET an spot
+GET http://localhost:3000/events/{{eventId}}/spots/{{spotId}}
+
+### DELETE an spot
+DELETE http://localhost:3000/events/{{eventId}}/spots/{{spotId}}
+
+### PATCH an spot
+PATCH http://localhost:3000/events/{{eventId}}/spots/{{spotId}}
+Content-Type: application/json
+
+{
+    "name": "Spot 1"
+}
+
+###
+@spotName = {{createSpot.response.body.name}}
+
+### POST reserve a spot
+POST http://localhost:3000/events/{{eventId}}/reserve
+Content-Type: application/json
+X-Api-Key: 1234
+
+{
+    "spots": ["{{ spotName }}"],
+    "ticketKind": "FULL",
+    "email": "teste@teste.com"
+}
